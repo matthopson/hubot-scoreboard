@@ -1,7 +1,7 @@
 {
   "name": "hubot-scoreboard",
   "description": "Keep score for your team.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Matt Hopson",
   "license": "MIT",
 

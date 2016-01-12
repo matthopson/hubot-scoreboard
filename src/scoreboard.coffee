@@ -27,6 +27,11 @@ module.exports = (robot) ->
 
   scoreboard = robot.brain.scoreboard
 
+  sortHighestFirst = (a, b) ->
+    return -1 if a.points > b.points
+    return 1 if a.points < b.points
+    return 0 if a.points == b.points
+
   # Searches users by id or name
   findUser = (search) ->
     foundUser = null
@@ -58,10 +63,7 @@ module.exports = (robot) ->
 
     if scoreboard.highScores.length > 0
       # sort our scores
-      scoreboard.highScores.sort (a,b) ->
-        -1 if a.points > b.points
-        1 if a.points < b.points
-        0 if a.points == b.points
+      scoreboard.highScores.sort(sortHighestFirst)
 
       # Truncate list to 10
       if scoreboard.highScores.length > 10
@@ -188,3 +190,26 @@ module.exports = (robot) ->
       user.points = 0
 
     res.reply "@#{userName} currently has #{user.points} points."
+
+
+  # Display current score
+  robot.respond /(what\'s|what is)(.*)score/i, (res) ->
+    unless isGameRunning()
+      res.reply "Sorry, but you must start a game before you can do that."
+
+    # Create an array of user scores
+    userScores = []
+    for index, user of robot.brain.data.users
+      if user.hasOwnProperty('points')
+        userScores.push user
+
+    if userScores.length > 0
+      userScores.sort(sortHighestFirst)
+      currentScoreText = ''
+      userScores.forEach (userScore, index) ->
+        place = index + 1
+        currentScoreText += "#{place}. `#{userScore.name}` with `#{userScore.points}` points.\n"
+    else
+      currentScoreText = "Sorry, but there doesn't seem to be any points acrued this game."
+
+    res.reply "Here is the score for `#{scoreboard.game.gameName}`:\n #{currentScoreText}"
