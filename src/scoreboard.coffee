@@ -7,6 +7,7 @@
 # Commands:
 #   start a game - Starts a new game.
 #   end the game - Ends the current game.
+#   what game are we playing - Shows the name of the current game.
 #   give <user> <number> points - Adds points to a user's score.
 #   deduct <number> points from <user> - Deducts points from user's score.
 #   how many points does <user> have - Checks a user's point count.
@@ -131,6 +132,13 @@ module.exports = (robot) ->
       highScoresText = ""
     res.reply "#{scoreboard.game.gameName} has ended.\n#{winnerText}#{highScoresText}"
 
+
+  # Lists the name of the game
+  robot.respond /what (?:game\s)?are we playing/, (res) ->
+    if isGameRunning()
+      res.reply "You are currently playing `#{scoreboard.game.gameName}`."
+    else
+      res.reply "It doesn't appear we are currently playing anything.\n\n...How about a nice game of chess?"
 
 
   # Adds points to a user's score.
